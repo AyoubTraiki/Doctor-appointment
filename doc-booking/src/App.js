@@ -4,14 +4,22 @@ import Login from "./component/Login";
 import Home from "./component/Home";
 import "./style/App.css";
 
+
 function App(){
+
+  // Sign in && Sign up
   const[user,setUser]=useState('');
   const[email,setEmail]=useState('');
   const[password,setPassword]=useState('');
   const[emailError,setEmailError]=useState('');
   const[passwordError,setPasswordError]=useState('');
-  const[hasAccount,setHasAccount]=useState(false);
+  const[hasAccount,setHasAccount]=useState(true);
+  const[nom, setNom]=useState("");
+  const[prenom, setPrenom]=useState("");
+  const[adresse, setAdresse]=useState("");
+  const[numTel, setNumTel]=useState("");
   
+
   const clearInputs=()=>{
     setEmail('');
     setPassword('');
@@ -39,6 +47,8 @@ function App(){
           case "auth/wrong-password":
             setPasswordError(err.message);
             break;
+          default :
+            break;
         }
 
       })
@@ -48,10 +58,9 @@ function App(){
 
   const handleSignup=()=>{
     clearErrors();
-    Fire 
-      .auth()
-      .createUserWithEmailAndPassword(email,password)
-      .catch((err)=>{
+
+    Fire.auth().createUserWithEmailAndPassword(email,password);
+    Fire.auth().createUserWithEmailAndPassword(email,password).catch((err)=>{
         switch(err.code){
           case "auth/email-already-in-use":
           case "auth/invalid-email":
@@ -60,8 +69,24 @@ function App(){
           case "auth/weak-password":
             setPasswordError(err.message);
             break;
+          default :
+            break;
         }
       })
+
+      if(emailError == "" && passwordError == ""){
+        Fire
+        .firestore()
+        .collection("User")
+        .add({
+          nom : {nom},
+          prenom :{prenom},
+          adresse :{adresse},
+          email : {email},
+          numTel : {numTel}
+        })
+      }
+      
   }
   const handleLogout=()=>{
     Fire.auth().signOut();
@@ -105,6 +130,14 @@ function App(){
         setHasAccount={setHasAccount}
         emailError={emailError}
         passwordError={passwordError}
+        nom={nom}
+        setNom={setNom}
+        prenom={prenom}
+        setPrenom={setPrenom}
+        adresse={adresse}
+        setAdresse={setAdresse}
+        numTel={numTel}
+        setNumTel={setNumTel}
        />
 
       )}
